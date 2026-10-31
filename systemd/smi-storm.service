@@ -1,0 +1,26 @@
+[Unit]
+Description=Linux Ring -2 SMM Firmware Latency & Stolen Time Sentinel
+Documentation=https://github.com/patrick-isles/smi-storm-sentinel
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/smi-storm-sentinel --daemon --port 9114 --threshold-us 100 --interval 1.0
+Restart=always
+RestartSec=5s
+
+# Hardened Security Sandboxing
+ProtectSystem=strict
+ProtectHome=read-only
+ReadOnlyPaths=/proc/interrupts
+PrivateTmp=true
+CapabilityBoundingSet=CAP_SYS_ADMIN CAP_SYS_RAWIO
+AmbientCapabilities=CAP_SYS_ADMIN CAP_SYS_RAWIO
+
+# Resource Limits
+MemoryMax=64M
+CPUQuota=15%
+
+[Install]
+WantedBy=multi-user.target
